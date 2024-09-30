@@ -102,3 +102,26 @@ cursor: pointer;}
     margin-left: 70px;
     margin-top: 5px;
     cursor: pointer;}
+
+
+    .cta-button {
+        padding: 10px 20px;
+        background-color: #E949DB; /* Your accent color */
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    
+    .cta-button:hover {
+        background-color: #d03b9a; /* Darker shade for hover effect */
+    }
+    
+    .footer {
+        background-color: #ADEDC2; /* Light green for footer */
+        text-align: center;
+        padding: 10px;
+        position: relative;
+        bottom: 0;
+        width: 100%;
+    }
