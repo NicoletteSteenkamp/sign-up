@@ -14,10 +14,14 @@ app.use(cors());
 app.use(cookieParser());
 
 const db = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: "Ezekiel1!",
-    database: 'signup'
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME,
+    port: process.env.DB_PORT || 26528, 
+    ssl: {
+        rejectUnauthorized: true 
+    }
 });
 
 // Middleware to verify JWT token
@@ -32,12 +36,13 @@ const verifyToken = (req, res, next) => {
     });
 };
 
+// Connect to the database
 db.connect((err) => {
     if (err) {
         console.error('Database connection failed:', err);
         return;
     }
-    console.log('Connected to the database');
+    console.log('Connected to Aiven MySQL database');
 });
 
 // Registration Route
@@ -115,8 +120,11 @@ const loginUser = async (email, password) => {
     }
 };
 
+// Protected Route
 app.get('/api/protected', verifyToken, (req, res) => {
     res.send('This is a protected route. Welcome, user ID: ' + req.user.id);
 });
 
-app.listen(8081, () => console.log('Server running on port 8081'));
+// Start server
+const PORT = process.env.PORT || 8081;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
