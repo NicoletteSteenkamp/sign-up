@@ -13,21 +13,27 @@ function LoginForm() {
     const handleSubmit = async (event) => {
         event.preventDefault();
         setError(''); // Reset error message
-    
+
         try {
-            const response = await fetch('http://localhost:8081/api/login', {
+            const response = await fetch('https://sign-up-t5un.onrender.com/api/login', { // Make sure to use the correct endpoint
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({ email, password }),
             });
-    
+
             // Check if the response is ok
             if (response.ok) {
                 const data = await response.json();
-                // Store the token in local storage
-                localStorage.setItem('token', data.token);
+
+                // Store the token based on Remember Me checkbox
+                if (rememberMe) {
+                    localStorage.setItem('token', data.token);
+                } else {
+                    sessionStorage.setItem('token', data.token); // Store token in session storage if not remembered
+                }
+
                 // Redirect to a protected route (e.g., dashboard)
                 navigate('/Home'); // Change to your desired route
             } else {
@@ -86,7 +92,7 @@ function LoginForm() {
                         
                         <button type="submit" className="login mb-3">Login</button>
                         
-                        {error && <p style={{ color: 'red' }}>{error}</p>} {/* Display error message */}
+                        {error && <p style={{ color: 'red' }}>{error}</p>} 
                         
                         <span>
                             Need an Account? <Link to="/register">Sign up here</Link>

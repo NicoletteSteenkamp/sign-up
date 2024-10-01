@@ -1,4 +1,4 @@
-import Registerform from './Register';
+import RegisterForm from './Register'; 
 import Home from './Home';
 import LoginForm from './Login';
 import NotFound from './NotFound';
@@ -10,9 +10,9 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/home" element={<Home />} />              
-        <Route path="/register" element={<Registerform />} /> 
+        <Route path="/register" element={<RegisterForm />} /> 
         <Route path="/login" element={<LoginForm />} />  
-        <Route path='/notfound' element={<NotFound/>} />   
+        <Route path="*" element={<NotFound />} /> 
       </Routes>
     </BrowserRouter>
   );

@@ -3,23 +3,23 @@ import mainImage from '../src/assets/Image.jpg';
 import separatorImage from '../src/assets/Seperator.png'; 
 import logo from '../src/assets/Logo.png';
 import Heading from '../src/assets/Heading.png';
-import { Link, useNavigate } from 'react-router-dom'; // Import useNavigate for redirection
+import { Link, useNavigate } from 'react-router-dom';
 
 function RegisterForm() {
     const [firstName, setFirstName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [error, setError] = useState(''); // For error messages
-    const [successMessage, setSuccessMessage] = useState(''); // For success messages
-    const navigate = useNavigate(); // Initialize navigate
+    const [error, setError] = useState('');
+    const [successMessage, setSuccessMessage] = useState('');
+    const navigate = useNavigate();
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        setError(''); // Reset error message
-        setSuccessMessage(''); // Reset success message
-    
+        setError('');
+        setSuccessMessage('');
+
         try {
-            const response = await fetch('http://localhost:8081/api/register', {
+            const response = await fetch('https://sign-up-t5un.onrender.com/api/register', { // Correct endpoint
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -27,23 +27,19 @@ function RegisterForm() {
                 body: JSON.stringify({ firstName, email, password }),
             });
     
-            // Check if the response is ok
             if (response.ok) {
-                // Registration was successful
-                const data = await response.json(); // This should now work without issue
-                setSuccessMessage(data.message || 'Registration Successful!'); // Show success message
-                navigate('/login'); // Redirect to the login page
+                const data = await response.json();
+                setSuccessMessage(data.message || 'Registration Successful!');
+                navigate('/login');
             } else {
-                // Handle errors from the server
                 const errorData = await response.json();
-                setError(errorData.message || 'Registration failed. Please try again.'); // Show error message
+                setError(errorData.message || 'Registration failed. Please try again.');
             }
         } catch (error) {
-            console.error('Registration error:', error); // Log the error for debugging
-            setError('An error occurred. Please try again.'); // General error handling
+            console.error('Registration error:', error);
+            setError('An error occurred. Please try again.');
         }
     };
-    
 
     return (
         <div className="register-form-container">
@@ -56,8 +52,8 @@ function RegisterForm() {
                     <br/>
                     <img src={separatorImage} alt="Separator" className="separator" />
                     
-                    {error && <p style={{ color: 'red' }}>{error}</p>} {/* Display error message */}
-                    {successMessage && <p style={{ color: 'green' }}>{successMessage}</p>} {/* Display success message */}
+                    {error && <p style={{ color: 'red' }}>{error}</p>}
+                    {successMessage && <p style={{ color: 'green' }}>{successMessage}</p>}
 
                     <form onSubmit={handleSubmit}>
                         <div className="form-group mb-3">
