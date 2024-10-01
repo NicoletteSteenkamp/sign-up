@@ -10,7 +10,10 @@ dotenv.config(); // Load environment variables
 
 const app = express();
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+    origin: 'https://sign-up-frontend.onrender.com', // Replace with your actual frontend URL
+    credentials: true, // Allow credentials
+}));
 app.use(cookieParser());
 
 const db = mysql.createConnection({
@@ -100,25 +103,6 @@ app.post('/api/login', async (req, res) => {
         res.json({ message: 'Login successful', token });
     });
 });
-
-// After successful login
-const loginUser = async (email, password) => {
-    const response = await fetch('http://localhost:8081/api/login', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-    });
-
-    const data = await response.json();
-    if (response.ok) {
-        // Store the token in local storage
-        localStorage.setItem('token', data.token);
-    } else {
-        console.error(data.message);
-    }
-};
 
 // Protected Route
 app.get('/api/protected', verifyToken, (req, res) => {
