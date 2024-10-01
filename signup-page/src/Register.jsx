@@ -4,7 +4,7 @@ import separatorImage from '../src/assets/Seperator.png';
 import logo from '../src/assets/Logo.png';
 import Heading from '../src/assets/Heading.png';
 import { Link, useNavigate } from 'react-router-dom';
-
+import axios from 'axios';
 
 function RegisterForm() {
     const [firstName, setFirstName] = useState('');
@@ -27,31 +27,27 @@ function RegisterForm() {
         setIsLoading(true); // Set loading state
 
         try {
-            const response = await fetch('https://sign-up-t5un.onrender.com/api/register', { 
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ firstName, email, password }),
+            const response = await axios.post('https://sign-up-t5un.onrender.com/api/register', { 
+                firstName, 
+                email, 
+                password 
             });
-    
-            setIsLoading(false); // Reset loading state
 
-            if (response.ok) {
-                const data = await response.json();
-                setSuccessMessage(data.message || 'Registration Successful!');
-                navigate('/login');
-            }  else {
-                const errorData = await response.json();
-                console.error('Error response:', errorData); // Log the error response
-                setError(errorData.message || 'Registration failed. Please try again.');
-            
-            
-            }
+            setSuccessMessage(response.data.message || 'Registration Successful!');
+            navigate('/login');
         } catch (error) {
             setIsLoading(false); // Reset loading state
-            console.error('Registration error:', error);
-            setError('An error occurred. Please try again.');
+            console.error('Registration error:', error.response || error.message); // Log the full error response
+
+            if (error.response) {
+                // The request was made and the server responded with a status code
+                setError(error.response.data.message || 'Registration failed. Please try again.');
+            } else {
+                // Something happened in setting up the request that triggered an error
+                setError('An error occurred. Please try again.');
+            }
+        } finally {
+            setIsLoading(false); // Reset loading state in both success and failure cases
         }
     };
 
