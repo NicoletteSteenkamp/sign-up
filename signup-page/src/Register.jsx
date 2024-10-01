@@ -34,16 +34,16 @@ function RegisterForm() {
             });
 
             setSuccessMessage(response.data.message || 'Registration Successful!');
-            navigate('/login');
+            setTimeout(() => {
+                navigate('/login');
+            }, 2000); // Navigate after 2 seconds
         } catch (error) {
             setIsLoading(false); // Reset loading state
             console.error('Registration error:', error.response || error.message); // Log the full error response
 
             if (error.response) {
-                // The request was made and the server responded with a status code
                 setError(error.response.data.message || 'Registration failed. Please try again.');
             } else {
-                // Something happened in setting up the request that triggered an error
                 setError('An error occurred. Please try again.');
             }
         } finally {

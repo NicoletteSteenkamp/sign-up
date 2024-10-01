@@ -1,7 +1,7 @@
 import RegisterForm from './Register'; 
-import Home from './Home';
-import LoginForm from './Login';
-import NotFound from './NotFound';
+import Home from './Home'; 
+import LoginForm from './Login'; 
+import NotFound from './NotFound'; 
 import './App.css';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
