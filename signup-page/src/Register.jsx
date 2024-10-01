@@ -11,15 +11,22 @@ function RegisterForm() {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
+
+    const handleInputChange = (setter) => (e) => {
+        setter(e.target.value);
+        setSuccessMessage(''); // Clear success message on input change
+    };
 
     const handleSubmit = async (event) => {
         event.preventDefault();
         setError('');
         setSuccessMessage('');
+        setIsLoading(true); // Set loading state
 
         try {
-            const response = await fetch('https://sign-up-t5un.onrender.com/api/register', { // Correct endpoint
+            const response = await fetch('https://sign-up-t5un.onrender.com/api/register', { 
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -27,6 +34,8 @@ function RegisterForm() {
                 body: JSON.stringify({ firstName, email, password }),
             });
     
+            setIsLoading(false); // Reset loading state
+
             if (response.ok) {
                 const data = await response.json();
                 setSuccessMessage(data.message || 'Registration Successful!');
@@ -36,6 +45,7 @@ function RegisterForm() {
                 setError(errorData.message || 'Registration failed. Please try again.');
             }
         } catch (error) {
+            setIsLoading(false); // Reset loading state
             console.error('Registration error:', error);
             setError('An error occurred. Please try again.');
         }
@@ -45,11 +55,9 @@ function RegisterForm() {
         <div className="register-form-container">
             <div className="form-image-container">
                 <div className="form-content">
-                    <img src={logo} alt="Logo" className='logo'/>
-                    <br/>
+                    <img src={logo} alt="Logo" className='logo'/><br/>
                     <img src={Heading} alt="Heading" className='heading'/>
-                    <button type="button" className="google-button">Continue with Google</button>
-                    <br/>
+                    <button type="button" className="google-button">Continue with Google</button><br/>
                     <img src={separatorImage} alt="Separator" className="separator" />
                     
                     {error && <p style={{ color: 'red' }}>{error}</p>}
@@ -62,7 +70,7 @@ function RegisterForm() {
                                 id="firstName" 
                                 placeholder="First Name" 
                                 value={firstName} 
-                                onChange={(e) => setFirstName(e.target.value)} 
+                                onChange={handleInputChange(setFirstName)} 
                                 required 
                             />
                         </div>
@@ -72,7 +80,7 @@ function RegisterForm() {
                                 placeholder="E-mail" 
                                 id="email" 
                                 value={email} 
-                                onChange={(e) => setEmail(e.target.value)} 
+                                onChange={handleInputChange(setEmail)} 
                                 required 
                             />
                         </div>
@@ -82,11 +90,13 @@ function RegisterForm() {
                                 placeholder="Password" 
                                 id="password" 
                                 value={password} 
-                                onChange={(e) => setPassword(e.target.value)} 
+                                onChange={handleInputChange(setPassword)} 
                                 required 
                             />
                         </div>
-                        <button type="submit" className="register mb-3">Register</button>
+                        <button type="submit" className="register mb-3" disabled={isLoading}>
+                            {isLoading ? 'Registering...' : 'Register'}
+                        </button>
                         <br/>
                         <span>
                             Already Have an Account? <Link to="/login">Log in here</Link>

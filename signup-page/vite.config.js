@@ -4,20 +4,17 @@ import react from '@vitejs/plugin-react-swc';
 export default defineConfig({
   plugins: [react()],
   
-  base: '/',  
-
+  base: '/', 
 
   server: {
     port: 5173,  
     open: true, 
   },
 
-  
   build: {
     outDir: 'dist',  
     sourcemap: true,  
   },
 
-  
   assetsInclude: ['**/*.svg', '**/*.png', '**/*.jpg'], 
 });

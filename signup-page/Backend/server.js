@@ -11,7 +11,7 @@ dotenv.config(); // Load environment variables
 const app = express();
 app.use(express.json());
 app.use(cors({
-    origin: 'https://sign-up-frontend.onrender.com', // Replace with your actual frontend URL
+    origin: 'https://sign-up-frontend.onrender.com', 
     credentials: true, // Allow credentials
 }));
 app.use(cookieParser());
