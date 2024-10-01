@@ -4,14 +4,14 @@ import LoginForm from './Login';
 import NotFound from './NotFound'; 
 
 import './App.css';
-import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 function App() {
   return (
     <BrowserRouter>
      
       <Routes>
-        <Route path="/" element={<Navigate to="/register" />} />
+       
         <Route path="/home" element={<Home />} />              
         <Route path="/register" element={<RegisterForm />} /> 
         <Route path="/login" element={<LoginForm />} />  
