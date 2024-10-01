@@ -8,11 +8,13 @@ function LoginForm() {
     const [password, setPassword] = useState('');
     const [rememberMe, setRememberMe] = useState(false);
     const [error, setError] = useState('');
+    const [isLoading, setIsLoading] = useState(false); // Add loading state
     const navigate = useNavigate();
 
     const handleSubmit = async (event) => {
         event.preventDefault();
         setError(''); // Reset error message
+        setIsLoading(true); // Set loading state
 
         try {
             const response = await fetch('https://sign-up-t5un.onrender.com/api/login', {
@@ -22,6 +24,8 @@ function LoginForm() {
                 },
                 body: JSON.stringify({ email, password }),
             });
+
+            setIsLoading(false); // Reset loading state
 
             if (response.ok) {
                 const data = await response.json();
@@ -43,6 +47,7 @@ function LoginForm() {
         } catch (error) {
             console.error('Login error:', error);
             setError('An error occurred. Please try again.');
+            setIsLoading(false); // Reset loading state
         }
     };
 
@@ -89,7 +94,9 @@ function LoginForm() {
                             </label>
                         </div>
                         
-                        <button type="submit" className="login mb-3">Login</button>
+                        <button type="submit" className="login mb-3" disabled={isLoading}>
+                            {isLoading ? 'Logging in...' : 'Login'} {/* Show loading text */}
+                        </button>
                         
                         {error && <p style={{ color: 'red' }}>{error}</p>} 
                         
