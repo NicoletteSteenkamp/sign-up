@@ -2,60 +2,57 @@ import { useState } from 'react';
 import mainImage from '../src/assets/Image.jpg'; 
 import logo from '../src/assets/Logo.png';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 
 function LoginForm() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [rememberMe, setRememberMe] = useState(false);
     const [error, setError] = useState('');
-    const [isLoading, setIsLoading] = useState(false);
-    const [showPassword, setShowPassword] = useState(false);
+    const [isLoading, setIsLoading] = useState(false); // Add loading state
     const navigate = useNavigate();
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        setError('');
-        setIsLoading(true);
-
-        // Basic email validation
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email)) {
-            setError('Please enter a valid email address.');
-            setIsLoading(false);
-            return;
-        }
+        setError(''); // Reset error message
+        setIsLoading(true); // Set loading state
 
         try {
-            const response = await axios.post(`${process.env.REACT_APP_API_URL}/login`, {
-                email,
-                password,
+            const response = await fetch('https://sign-up-t5un.onrender.com/api/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email, password }),
             });
-            
-            const { token } = response.data;
 
-            // Store token based on Remember Me
-            if (rememberMe) {
-                localStorage.setItem('token', token);
+            setIsLoading(false); // Reset loading state
+
+            if (response.ok) {
+                const data = await response.json();
+
+                // Store the token based on Remember Me checkbox
+                if (rememberMe) {
+                    localStorage.setItem('token', data.token);
+                } else {
+                    sessionStorage.setItem('token', data.token);
+                }
+
+                // Redirect to a protected route (e.g., dashboard)
+                navigate('/Home'); // Change to your desired route
             } else {
-                sessionStorage.setItem('token', token);
+                // Handle server error
+                const errorData = await response.json();
+                setError(errorData.message || 'Login failed. Please check your credentials.');
             }
-
-            // Navigate to home or protected route
-            navigate('/home');
         } catch (error) {
             console.error('Login error:', error);
-            toast.error(error.response?.data.message || 'Login failed. Please try again.');
-        } finally {
-            setIsLoading(false);
+            setError('An error occurred. Please try again.');
+            setIsLoading(false); // Reset loading state
         }
     };
 
     return (
         <div className="login-form-container d-flex justify-content-center align-items-center min-vh-100">
-            <ToastContainer />
             <div className="form-image-container d-flex">
                 <div className="form-content p-4" style={{ flex: 1 }}>
                     <img src={logo} alt="Logo" className='logo mb-4'/>
@@ -68,7 +65,6 @@ function LoginForm() {
                                 type="email" 
                                 placeholder="E-mail" 
                                 id="email" 
-                                aria-label="Email address"
                                 value={email} 
                                 onChange={(e) => setEmail(e.target.value)} 
                                 required 
@@ -76,20 +72,13 @@ function LoginForm() {
                         </div>
                         <div className="form-group mb-3">
                             <input 
-                                type={showPassword ? "text" : "password"} 
+                                type="password" 
                                 placeholder="Password" 
                                 id="password" 
                                 value={password} 
                                 onChange={(e) => setPassword(e.target.value)} 
                                 required 
                             />
-                            <button 
-                                type="button" 
-                                onClick={() => setShowPassword(!showPassword)} 
-                                className="toggle-password" 
-                            >
-                                {showPassword ? 'Hide' : 'Show'} 
-                            </button>
                         </div>
                     
                         <div className="form-check d-flex mb-3">
@@ -106,7 +95,7 @@ function LoginForm() {
                         </div>
                         
                         <button type="submit" className="login mb-3" disabled={isLoading}>
-                            {isLoading ? 'Logging in...' : 'Login'}
+                            {isLoading ? 'Logging in...' : 'Login'} {/* Show loading text */}
                         </button>
                         
                         {error && <p style={{ color: 'red' }}>{error}</p>} 
