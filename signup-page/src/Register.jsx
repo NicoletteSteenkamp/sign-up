@@ -31,7 +31,7 @@ function RegisterForm() {
             if (response.ok) {
                 const data = await response.json();
                 setSuccessMessage(data.message || 'Registration Successful!');
-                navigate('/login'); // Redirect to the login page after successful registration
+                navigate('/home'); // Redirect to the login page after successful registration
             } else {
                 const errorData = await response.json();
                 setError(errorData.message || 'Registration failed. Please try again.');

@@ -34,7 +34,7 @@ function LoginForm() {
                 }
 
                 // Redirect to a protected route (e.g., dashboard)
-                navigate('/Home'); // Change to your desired route
+                navigate('/home'); // Change to your desired route
             } else {
                 // Handle server error
                 const errorData = await response.json();
