@@ -4,7 +4,7 @@
   "main": "server.js",
   "type": "module",
   "scripts": {
-    "start": "node backend/server.js", 
+    "start": "node backend/server.js",
     "dev": "nodemon backend/server.js"
   },
   "dependencies": {
@@ -15,5 +15,12 @@
     "express": "^4.21.0",
     "jsonwebtoken": "^9.0.2",
     "mysql2": "^3.11.3"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
+    "@types/cookie-parser": "^1.4.7",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
+    "@types/jsonwebtoken": "^9.0.7"
   }
 }
