@@ -17,7 +17,7 @@ function LoginForm() {
         setIsLoading(true); // Set loading state
 
         try {
-            const response = await fetch('https://sign-up-t5un.onrender.com/login', {
+            const response = await fetch('https://sign-up-t5un.onrender.com/api/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

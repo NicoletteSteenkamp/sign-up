@@ -27,7 +27,7 @@ function RegisterForm() {
         setIsLoading(true); // Set loading state
 
         try {
-            const response = await axios.post('https://sign-up-t5un.onrender.com/register', { 
+            const response = await axios.post('https://sign-up-t5un.onrender.com/api/register', { 
                 firstName, 
                 email, 
                 password 
