@@ -4,7 +4,8 @@ import separatorImage from '../src/assets/Seperator.png';
 import logo from '../src/assets/Logo.png';
 import Heading from '../src/assets/Heading.png';
 import { Link, useNavigate } from 'react-router-dom';
-import api from './api';
+
+
 function RegisterForm() {
     const [firstName, setFirstName] = useState('');
     const [email, setEmail] = useState('');
@@ -26,7 +27,7 @@ function RegisterForm() {
         setIsLoading(true); // Set loading state
 
         try {
-            const response = await api.post('https://sign-up-t5un.onrender.com/api/register', { 
+            const response = await fetch ('https://sign-up-t5un.onrender.com/api/register', { 
                 firstName, 
                 email, 
                 password 
