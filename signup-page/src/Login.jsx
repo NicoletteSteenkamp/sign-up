@@ -1,24 +1,21 @@
 import { useState } from 'react';
 import mainImage from '../src/assets/Image.jpg'; 
 import logo from '../src/assets/Logo.png';
-import { Link, useNavigate } from 'react-router-dom';
-
+import { Link, useNavigate } from 'react-router-dom'; // Import useNavigate for redirection
 
 function LoginForm() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [rememberMe, setRememberMe] = useState(false);
-    const [error, setError] = useState('');
-    const [isLoading, setIsLoading] = useState(false); // Add loading state
-    const navigate = useNavigate();
+    const [error, setError] = useState(''); // To manage error messages
+    const navigate = useNavigate(); // Initialize navigate
 
     const handleSubmit = async (event) => {
         event.preventDefault();
         setError(''); // Reset error message
-        setIsLoading(true); // Set loading state
 
         try {
-            const response = await fetch('https://sign-up-t5un.onrender.com/api/login', {
+            const response = await fetch('https://sign-up-t5un.onrender.com/api/login', { // Make sure to use the correct endpoint
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -26,8 +23,7 @@ function LoginForm() {
                 body: JSON.stringify({ email, password }),
             });
 
-            setIsLoading(false); // Reset loading state
-
+            // Check if the response is ok
             if (response.ok) {
                 const data = await response.json();
 
@@ -35,20 +31,19 @@ function LoginForm() {
                 if (rememberMe) {
                     localStorage.setItem('token', data.token);
                 } else {
-                    sessionStorage.setItem('token', data.token);
+                    sessionStorage.setItem('token', data.token); // Store token in session storage if not remembered
                 }
 
                 // Redirect to a protected route (e.g., dashboard)
                 navigate('/Home'); // Change to your desired route
             } else {
-                // Handle server error
+                // If the response was not ok, attempt to parse the error message
                 const errorData = await response.json();
-                setError(errorData.message || 'Login failed. Please check your credentials.');
+                setError(errorData.message || 'Login failed. Please check your credentials.'); // Display the error message from the server
             }
         } catch (error) {
-            console.error('Login error:', error);
-            setError('An error occurred. Please try again.');
-            setIsLoading(false); // Reset loading state
+            console.error('Login error:', error); // Log the error to the console for debugging
+            setError('An error occurred. Please try again.'); // General error handling message
         }
     };
 
@@ -95,9 +90,7 @@ function LoginForm() {
                             </label>
                         </div>
                         
-                        <button type="submit" className="login mb-3" disabled={isLoading}>
-                            {isLoading ? 'Logging in...' : 'Login'} {/* Show loading text */}
-                        </button>
+                        <button type="submit" className="login mb-3">Login</button>
                         
                         {error && <p style={{ color: 'red' }}>{error}</p>} 
                         
