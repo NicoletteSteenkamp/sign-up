@@ -3,61 +3,61 @@ import mainImage from '../src/assets/Image.jpg';
 import separatorImage from '../src/assets/Seperator.png'; 
 import logo from '../src/assets/Logo.png';
 import Heading from '../src/assets/Heading.png';
-import { Link, useNavigate } from 'react-router-dom'; // Import useNavigate for redirection
+import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+
+const apiUrl = import.meta.env.VITE_BACKEND_URL;
 
 function RegisterForm() {
     const [firstName, setFirstName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [error, setError] = useState(''); // For error messages
-    const [successMessage, setSuccessMessage] = useState(''); // For success messages
-    const navigate = useNavigate(); // Initialize navigate
+    const [error, setError] = useState('');
+    const [successMessage, setSuccessMessage] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+    const navigate = useNavigate();
+
+    const handleInputChange = (setter) => (e) => {
+        setter(e.target.value);
+        setSuccessMessage(''); // Clear success message on input change
+    };
 
     const handleSubmit = async (event) => {
         event.preventDefault();
         setError(''); // Reset error message
         setSuccessMessage(''); // Reset success message
-    
+        setIsLoading(true); // Set loading state
+
         try {
-            const response = await fetch('https://sign-up-t5un.onrender.com/api/register', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ firstName, email, password }),
+            const response = await axios.post(`${apiUrl}/api/register`, {
+                name: firstName,
+                email,
+                password,
             });
-    
-            // Check if the response is ok
-            if (response.ok) {
-                // Registration was successful
-                const data = await response.json(); // This should now work without issue
-                setSuccessMessage(data.message || 'Registration Successful!'); // Show success message
-                navigate('/login'); // Redirect to the login page
-            } else {
-                // Handle errors from the server
-                const errorData = await response.json();
-                setError(errorData.message || 'Registration failed. Please try again.'); // Show error message
-            }
+
+            setSuccessMessage(response.data.message || 'Registration Successful!');
+            setTimeout(() => {
+                navigate('/login'); // Navigate after 2 seconds
+            }, 2000);
         } catch (error) {
-            console.error('Registration error:', error); // Log the error for debugging
-            setError('An error occurred. Please try again.'); // General error handling
+            console.error('Registration error:', error); // Log the error
+            setError(error.response?.data?.message || 'Registration failed. Please try again.');
+        } finally {
+            setIsLoading(false); // Reset loading state in both success and failure cases
         }
     };
-    
 
     return (
         <div className="register-form-container">
             <div className="form-image-container">
                 <div className="form-content">
-                    <img src={logo} alt="Logo" className='logo'/>
-                    <br/>
+                    <img src={logo} alt="Logo" className='logo'/><br/>
                     <img src={Heading} alt="Heading" className='heading'/>
-                    <button type="button" className="google-button">Continue with Google</button>
-                    <br/>
+                    <button type="button" className="google-button">Continue with Google</button><br/>
                     <img src={separatorImage} alt="Separator" className="separator" />
                     
-                    {error && <p style={{ color: 'red' }}>{error}</p>} 
-                    {successMessage && <p style={{ color: 'green' }}>{successMessage}</p>} 
+                    {error && <p style={{ color: 'red' }}>{error}</p>}
+                    {successMessage && <p style={{ color: 'green' }}>{successMessage}</p>}
 
                     <form onSubmit={handleSubmit}>
                         <div className="form-group mb-3">
@@ -66,7 +66,7 @@ function RegisterForm() {
                                 id="firstName" 
                                 placeholder="First Name" 
                                 value={firstName} 
-                                onChange={(e) => setFirstName(e.target.value)} 
+                                onChange={handleInputChange(setFirstName)} 
                                 required 
                             />
                         </div>
@@ -76,7 +76,7 @@ function RegisterForm() {
                                 placeholder="E-mail" 
                                 id="email" 
                                 value={email} 
-                                onChange={(e) => setEmail(e.target.value)} 
+                                onChange={handleInputChange(setEmail)} 
                                 required 
                             />
                         </div>
@@ -86,11 +86,13 @@ function RegisterForm() {
                                 placeholder="Password" 
                                 id="password" 
                                 value={password} 
-                                onChange={(e) => setPassword(e.target.value)} 
+                                onChange={handleInputChange(setPassword)} 
                                 required 
                             />
                         </div>
-                        <button type="submit" className="register mb-3">Register</button>
+                        <button type="submit" className="register mb-3" disabled={isLoading}>
+                            {isLoading ? 'Registering...' : 'Register'}
+                        </button>
                         <br/>
                         <span>
                             Already Have an Account? <Link to="/login">Log in here</Link>
@@ -104,3 +106,4 @@ function RegisterForm() {
 }
 
 export default RegisterForm;
+

@@ -1,49 +1,45 @@
 import { useState } from 'react';
 import mainImage from '../src/assets/Image.jpg'; 
 import logo from '../src/assets/Logo.png';
-import { Link, useNavigate } from 'react-router-dom'; // Import useNavigate for redirection
+import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+
+const apiUrl = import.meta.env.VITE_BACKEND_URL;
 
 function LoginForm() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [rememberMe, setRememberMe] = useState(false);
-    const [error, setError] = useState(''); // To manage error messages
-    const navigate = useNavigate(); // Initialize navigate
+    const [error, setError] = useState('');
+    const navigate = useNavigate();
 
     const handleSubmit = async (event) => {
         event.preventDefault();
         setError(''); // Reset error message
 
         try {
-            const response = await fetch('https://sign-up-t5un.onrender.com/api/login', { // Make sure to use the correct endpoint
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ email, password }),
-            });
+            const response = await axios.post(`${apiUrl}/api/login`, { email, password });
 
             // Check if the response is ok
-            if (response.ok) {
-                const data = await response.json();
+            if (response.status === 200) {
+                const data = response.data;
 
                 // Store the token based on Remember Me checkbox
                 if (rememberMe) {
                     localStorage.setItem('token', data.token);
                 } else {
-                    sessionStorage.setItem('token', data.token); // Store token in session storage if not remembered
+                    sessionStorage.setItem('token', data.token);
                 }
 
                 // Redirect to a protected route (e.g., dashboard)
                 navigate('/Home'); // Change to your desired route
             } else {
-                // If the response was not ok, attempt to parse the error message
-                const errorData = await response.json();
-                setError(errorData.message || 'Login failed. Please check your credentials.'); // Display the error message from the server
+                // Handle non-200 responses
+                setError('Login failed. Please check your credentials.'); 
             }
         } catch (error) {
-            console.error('Login error:', error); // Log the error to the console for debugging
-            setError('An error occurred. Please try again.'); // General error handling message
+            console.error('Login error:', error); 
+            setError(error.response?.data?.message || 'An error occurred. Please try again.'); // Display server error message
         }
     };
 
@@ -106,3 +102,4 @@ function LoginForm() {
 }
 
 export default LoginForm;
+
