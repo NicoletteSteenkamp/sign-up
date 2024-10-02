@@ -5,7 +5,6 @@ import logo from '../src/assets/Logo.png';
 import Heading from '../src/assets/Heading.png';
 import { Link, useNavigate } from 'react-router-dom';
 
-
 function RegisterForm() {
     const [firstName, setFirstName] = useState('');
     const [email, setEmail] = useState('');
@@ -20,35 +19,41 @@ function RegisterForm() {
         setSuccessMessage(''); // Clear success message on input change
     };
 
+    const handleRegister = async (name, email, password) => {
+        try {
+            const response = await fetch('https://sign-up-t5un.onrender.com/api/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ name, email, password }),
+            });
+
+            const data = await response.json();
+            if (response.ok) {
+                // Handle successful registration
+                setSuccessMessage(data.message || 'Registration Successful!');
+                setTimeout(() => {
+                    navigate('/login');
+                }, 2000); // Navigate after 2 seconds
+            } else {
+                console.error(data.message);
+                setError(data.message || 'Registration failed. Please try again.');
+            }
+        } catch (error) {
+            console.error('Error registering:', error);
+            setError('An error occurred. Please try again.');
+        } finally {
+            setIsLoading(false); // Reset loading state in both success and failure cases
+        }
+    };
+
     const handleSubmit = async (event) => {
         event.preventDefault();
         setError('');
         setSuccessMessage('');
         setIsLoading(true); // Set loading state
-
-        try {
-            const response = await fetch ('https://sign-up-t5un.onrender.com/api/register', { 
-                firstName, 
-                email, 
-                password 
-            });
-
-            setSuccessMessage(response.data.message || 'Registration Successful!');
-            setTimeout(() => {
-                navigate('/login');
-            }, 2000); // Navigate after 2 seconds
-        } catch (error) {
-            setIsLoading(false); // Reset loading state
-            console.error('Registration error:', error.response || error.message); // Log the full error response
-
-            if (error.response) {
-                setError(error.response.data.message || 'Registration failed. Please try again.');
-            } else {
-                setError('An error occurred. Please try again.');
-            }
-        } finally {
-            setIsLoading(false); // Reset loading state in both success and failure cases
-        }
+        await handleRegister(firstName, email, password); // Call the register function
     };
 
     return (
