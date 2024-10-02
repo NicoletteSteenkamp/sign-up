@@ -15,29 +15,30 @@ function RegisterForm() {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        setError('');
-        setSuccessMessage('');
+        setError(''); // Reset error message
+        setSuccessMessage(''); // Reset success message
 
         try {
-            const response = await fetch('https://sign-up-t5un.onrender.com/api/register', { // Correct endpoint
+            const response = await fetch('https://sign-up-t5un.onrender.com/api/register', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({ firstName, email, password }),
             });
-    
+            
+            // Check if the response is ok (status code 200-299)
             if (response.ok) {
                 const data = await response.json();
                 setSuccessMessage(data.message || 'Registration Successful!');
-                navigate('/login');
+                navigate('/login'); // Redirect to the login page after successful registration
             } else {
                 const errorData = await response.json();
                 setError(errorData.message || 'Registration failed. Please try again.');
             }
         } catch (error) {
-            console.error('Registration error:', error);
-            setError('An error occurred. Please try again.');
+            console.error('Registration error:', error); // Log the error for debugging
+            setError('An error occurred. Please try again.'); // Set a general error message
         }
     };
 
