@@ -11,7 +11,7 @@ dotenv.config(); // Load environment variables
 const app = express();
 app.use(express.json());
 app.use(cors({
-    origin: 'https://sign-up-frontend.onrender.com', 
+    origin: 'https://sign-up-frontend.onrender.com', // Replace with your actual frontend URL
     credentials: true, // Allow credentials
 }));
 app.use(cookieParser());
@@ -112,4 +112,3 @@ app.get('/api/protected', verifyToken, (req, res) => {
 // Start server
 const PORT = process.env.PORT || 8081;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-
