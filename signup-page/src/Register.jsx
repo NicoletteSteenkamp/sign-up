@@ -5,6 +5,7 @@ import logo from '../src/assets/Logo.png';
 import Heading from '../src/assets/Heading.png';
 import { Link, useNavigate } from 'react-router-dom';
 
+
 function RegisterForm() {
     const [firstName, setFirstName] = useState('');
     const [email, setEmail] = useState('');
@@ -31,7 +32,7 @@ function RegisterForm() {
             if (response.ok) {
                 const data = await response.json();
                 setSuccessMessage(data.message || 'Registration Successful!');
-                navigate('/home'); // Redirect to the login page after successful registration
+                navigate('/login'); // Redirect to the login page after successful registration
             } else {
                 const errorData = await response.json();
                 setError(errorData.message || 'Registration failed. Please try again.');
