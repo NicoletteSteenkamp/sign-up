@@ -17,31 +17,37 @@ function RegisterForm() {
         event.preventDefault();
         setError(''); // Reset error message
         setSuccessMessage(''); // Reset success message
-
+    
         try {
             const response = await fetch('https://sign-up-page-qmay.onrender.com/api/register', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                // Update this to send 'name' instead of 'firstName'
                 body: JSON.stringify({ name: Name, email, password }),
             });
-            
+    
             // Check if the response is ok (status code 200-299)
             if (response.ok) {
                 const data = await response.json();
+    
+                // Set success message and extract token
                 setSuccessMessage(data.message || 'Registration Successful!');
-                navigate('/login'); // Redirect to the login page after successful registration
+                
+                // Save token if you need to store it for authentication purposes
+                localStorage.setItem('token', data.token);
+    
+                navigate('/login'); 
             } else {
                 const errorData = await response.json();
-                setError(errorData.error || 'Registration failed. Please try again.'); // Use 'error' instead of 'message'
+                setError(errorData.error || 'Registration failed. Please try again.');
             }
         } catch (error) {
-            console.error('Registration error:', error); // Log the error for debugging
-            setError('An error occurred. Please try again.'); // Set a general error message
+            console.error('Registration error:', error);
+            setError('An error occurred. Please try again.');
         }
     };
+    
 
     return (
         <div className="register-form-container">
