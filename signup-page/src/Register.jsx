@@ -20,7 +20,7 @@ function RegisterForm() {
         setSuccessMessage(''); // Reset success message
 
         try {
-            const response = await fetch('https://sign-up-t5un.onrender.com/api/register', {
+            const response = await fetch('https://sign-up-page-qmay.onrender.com/api/register', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

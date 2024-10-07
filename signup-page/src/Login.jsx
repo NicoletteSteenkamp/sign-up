@@ -15,7 +15,7 @@ function LoginForm() {
         setError(''); // Reset error message
 
         try {
-            const response = await fetch('https://sign-up-t5un.onrender.com/api/login', {
+            const response = await fetch('https://sign-up-page-qmay.onrender.com/api/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
