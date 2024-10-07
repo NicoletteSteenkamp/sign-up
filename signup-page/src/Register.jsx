@@ -6,12 +6,12 @@ import Heading from '../src/assets/Heading.png';
 import { Link, useNavigate } from 'react-router-dom';
 
 function RegisterForm() {
-    const [Name, setName] = useState('');
+    const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
-    const [loading, setLoading] = useState(false); // State for loading
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
     const handleSubmit = async (event) => {
@@ -26,10 +26,9 @@ function RegisterForm() {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ name: Name, email, password }),
+                body: JSON.stringify({ name, email, password }),
             });
 
-            // Check if the response is ok (status code 200-299)
             if (response.ok) {
                 const data = await response.json();
                 setSuccessMessage(data.message || 'Registration Successful!');
@@ -45,7 +44,7 @@ function RegisterForm() {
                 navigate('/login'); 
             } else {
                 const errorData = await response.json();
-                setError(errorData.error || 'Registration failed. Please try again.');
+                setError(errorData.message || 'Registration failed. Please try again.');
             }
         } catch (error) {
             console.error('Registration error:', error);
@@ -54,7 +53,7 @@ function RegisterForm() {
             setLoading(false); // Reset loading state
         }
     };
-    
+
     return (
         <div className="register-form-container">
             <div className="form-image-container">
@@ -62,7 +61,7 @@ function RegisterForm() {
                     <img src={logo} alt="Logo" className='logo'/>
                     <br/>
                     <img src={Heading} alt="Heading" className='heading'/>
-                    <button type="button" className="google-button">Continue with Google</button>
+                    <button type="button" className="google-button" disabled={loading}>Continue with Google</button>
                     <br/>
                     <img src={separatorImage} alt="Separator" className="separator" />
                     
@@ -73,9 +72,8 @@ function RegisterForm() {
                         <div className="form-group mb-3">
                             <input 
                                 type="text" 
-                                id="firstName" 
                                 placeholder="First Name" 
-                                value={Name} 
+                                value={name} 
                                 onChange={(e) => setName(e.target.value)} 
                                 required 
                             />
@@ -84,7 +82,6 @@ function RegisterForm() {
                             <input 
                                 type="email" 
                                 placeholder="E-mail" 
-                                id="email" 
                                 value={email} 
                                 onChange={(e) => setEmail(e.target.value)} 
                                 required 
@@ -94,7 +91,6 @@ function RegisterForm() {
                             <input 
                                 type="password" 
                                 placeholder="Password" 
-                                id="password" 
                                 value={password} 
                                 onChange={(e) => setPassword(e.target.value)} 
                                 required 
