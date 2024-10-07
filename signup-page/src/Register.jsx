@@ -5,9 +5,8 @@ import logo from '../src/assets/Logo.png';
 import Heading from '../src/assets/Heading.png';
 import { Link, useNavigate } from 'react-router-dom';
 
-
 function RegisterForm() {
-    const [firstName, setFirstName] = useState('');
+    const [Name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
@@ -25,7 +24,8 @@ function RegisterForm() {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ firstName, email, password }),
+                // Update this to send 'name' instead of 'firstName'
+                body: JSON.stringify({ name: Name, email, password }),
             });
             
             // Check if the response is ok (status code 200-299)
@@ -35,7 +35,7 @@ function RegisterForm() {
                 navigate('/login'); // Redirect to the login page after successful registration
             } else {
                 const errorData = await response.json();
-                setError(errorData.message || 'Registration failed. Please try again.');
+                setError(errorData.error || 'Registration failed. Please try again.'); // Use 'error' instead of 'message'
             }
         } catch (error) {
             console.error('Registration error:', error); // Log the error for debugging
@@ -63,8 +63,8 @@ function RegisterForm() {
                                 type="text" 
                                 id="firstName" 
                                 placeholder="First Name" 
-                                value={firstName} 
-                                onChange={(e) => setFirstName(e.target.value)} 
+                                value={Name} 
+                                onChange={(e) => setName(e.target.value)} 
                                 required 
                             />
                         </div>
