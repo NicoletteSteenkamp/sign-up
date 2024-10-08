@@ -19,7 +19,7 @@ function RegisterForm() {
         setError(''); // Reset error message
         setSuccessMessage(''); // Reset success message
         setLoading(true); // Set loading to true
-
+    
         try {
             const response = await fetch('https://sign-up-page-qmay.onrender.com/api/register', {
                 method: 'POST',
@@ -28,11 +28,11 @@ function RegisterForm() {
                 },
                 body: JSON.stringify({ name, email, password }),
             });
-
+    
             if (response.ok) {
                 const data = await response.json();
                 setSuccessMessage(data.message || 'Registration Successful!');
-
+    
                 // Optionally, store token in localStorage or handle it with cookies
                 localStorage.setItem('token', data.token);
                 
@@ -40,10 +40,13 @@ function RegisterForm() {
                 setName('');
                 setEmail('');
                 setPassword('');
-
+    
                 navigate('/login'); 
+            } else if (response.status === 409) { // Handle 409 Conflict
+                const errorData = await response.text(); // Read as text
+                setError(errorData || 'Registration failed. Please try again.');
             } else {
-                const errorData = await response.json();
+                const errorData = await response.json(); // For other error types, handle as JSON
                 setError(errorData.message || 'Registration failed. Please try again.');
             }
         } catch (error) {
@@ -53,6 +56,7 @@ function RegisterForm() {
             setLoading(false); // Reset loading state
         }
     };
+    
 
     return (
         <div className="register-form-container">
