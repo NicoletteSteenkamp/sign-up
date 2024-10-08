@@ -10,7 +10,9 @@ function Home() {
             </header>
 
             <main className="main-content">
+                <br/>
                 <h2>Your Go-To Platform for Everything!</h2>
+                <br/>
                 <p>
                     At Ruix, we provide top-notch services and solutions to help you achieve your goals. 
                     Whether you are looking for tech support, development services, or just exploring new ideas, 

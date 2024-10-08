@@ -1,5 +1,4 @@
 import express from 'express';
-
 import mysql from 'mysql2';
 import cors from 'cors';
 import jwt from 'jsonwebtoken';
@@ -14,6 +13,8 @@ app.use(express.json());
 app.use(cors({
     origin: 'https://sign-up-frontend.onrender.com',
     credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 
 app.use(cookieParser());
@@ -31,7 +32,7 @@ const db = mysql.createConnection({
 
 // Middleware to verify JWT token
 const verifyToken = (req, res, next) => {
-    const token = req.headers['authorization']?.split(' ')[1];
+    const token = req.cookies.token || req.headers['authorization']?.split(' ')[1];
     if (!token) return res.status(403).send('A token is required for authentication');
 
     jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
@@ -50,6 +51,12 @@ db.connect((err) => {
     console.log('Connected to Aiven MySQL database');
 });
 
+// Function to generate and set JWT cookie
+const generateToken = (userId, res) => {
+    const token = jwt.sign({ id: userId }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    res.cookie('token', token, { httpOnly: true, secure: true, sameSite: 'Strict' });
+};
+
 // Registration Route
 app.post('/api/register', async (req, res) => {
     const { name, email, password } = req.body;
@@ -59,22 +66,37 @@ app.post('/api/register', async (req, res) => {
     }
 
     try {
-        const hashedPassword = await bcrypt.hash(password, 10);
-        const user = { name, email, password: hashedPassword };
-
-        const sql = 'INSERT INTO users SET ?';
-        db.query(sql, user, (err, result) => {
+        // Check if the email already exists
+        db.query('SELECT * FROM users WHERE email = ?', [email], async (err, results) => {
             if (err) {
-                console.error('Registration error:', err);
+                console.error('Database query error:', err);
                 return res.status(500).send('Server error');
             }
 
-            const token = jwt.sign({ id: result.insertId }, process.env.JWT_SECRET, { expiresIn: '1h' });
-            res.status(201).json({ message: 'User registered', token });
+            if (results.length > 0) {
+                return res.status(409).send('Email already exists');
+            }
+
+            // Hash the password
+            const hashedPassword = await bcrypt.hash(password, 12);
+            const user = { name, email, password: hashedPassword };
+
+            // Insert the user into the database
+            const sql = 'INSERT INTO users SET ?';
+            db.query(sql, user, (err, result) => {
+                if (err) {
+                    console.error('Database insertion error:', err);
+                    return res.status(500).send('Server error');
+                }
+
+                // Generate and set JWT token in cookie
+                generateToken(result.insertId, res);
+                res.status(201).json({ message: 'User registered' });
+            });
         });
     } catch (error) {
-        console.error('Error hashing password:', error);
-        return res.status(500).send('Server error');
+        console.error('Error:', error);
+        res.status(500).send('Server error');
     }
 });
 
@@ -101,8 +123,9 @@ app.post('/api/login', async (req, res) => {
             return res.status(401).send('Invalid email or password');
         }
 
-        const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-        res.json({ message: 'Login successful', token });
+        // Generate and set JWT token in cookie
+        generateToken(user.id, res);
+        res.json({ message: 'Login successful' });
     });
 });
 

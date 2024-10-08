@@ -32,8 +32,8 @@ function RegisterForm() {
             if (response.ok) {
                 const data = await response.json();
                 setSuccessMessage(data.message || 'Registration Successful!');
-                
-                // Save token if you need to store it for authentication purposes
+
+                // Optionally, store token in localStorage or handle it with cookies
                 localStorage.setItem('token', data.token);
                 
                 // Reset fields after success
@@ -61,7 +61,14 @@ function RegisterForm() {
                     <img src={logo} alt="Logo" className='logo'/>
                     <br/>
                     <img src={Heading} alt="Heading" className='heading'/>
-                    <button type="button" className="google-button" disabled={loading}>Continue with Google</button>
+                    <button 
+                        type="button" 
+                        className="google-button" 
+                        disabled={loading}
+                        onClick={() => {/* Handle Google login */}}
+                    >
+                        Continue with Google
+                    </button>
                     <br/>
                     <img src={separatorImage} alt="Separator" className="separator" />
                     
